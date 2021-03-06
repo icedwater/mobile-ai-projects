@@ -11,6 +11,6 @@ from sklearn.model_selection import KFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 
-# read in housing.csv using pandas - from where?
+# read in housing.csv using pandas (github.com/PacktPublishing/Mobile-Artificial-Intelligence-Projects/)
 dataframe = pd.read_csv("housing.csv", sep=',', header=0)
 dataset = dataframe.values

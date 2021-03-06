@@ -1,0 +1,8 @@
+# vim temp files
+.*.sw?
+
+# excel files should be available online
+*.xls?
+
+# virtual environments
+venv/

@@ -46,7 +46,7 @@ def report_MSE(model, model_name="default", features=features, target=target, cv
     We assume features, target, and cross-validation are defined already.
     """
     results = cross_val_score(model, features, target, cv=kfold)
-    print(f"{model_name:30} MSE\t: {results.std():9.3}")
+    print(f"{model_name:30} MSE: {results.std():9.3}")
 
 ## evaluate simple model
 estimator = KerasRegressor(build_fn=simple_shallow_seq_net, epochs=100, batch_size=50, verbose=0)

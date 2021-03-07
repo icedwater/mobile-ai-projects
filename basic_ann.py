@@ -48,6 +48,7 @@ def report_MSE(model, model_name="default", features=features, target=target, cv
     results = cross_val_score(model, features, target, cv=kfold)
     print(f"{model_name:30} MSE\t: {results.std():9.3}")
 
+## evaluate simple model
 estimator = KerasRegressor(build_fn=simple_shallow_seq_net, epochs=100, batch_size=50, verbose=0)
 report_MSE(estimator, model_name="simple_shallow_seq_net")
 
@@ -55,7 +56,7 @@ report_MSE(estimator, model_name="simple_shallow_seq_net")
 estimator.fit(features, target)
 estimator.model.save("simple_shallow_seq_net.h5")
 
-## try again with standardisation
+## evaluate simple model with standardisation
 estimators = []
 estimators.append(("standardize", StandardScaler()))
 estimators.append(("estimator", KerasRegressor(build_fn=simple_shallow_seq_net, epochs=100, batch_size=50, verbose=0)))

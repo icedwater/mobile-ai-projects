@@ -45,3 +45,15 @@ print(f"simple_shallow_seq_net model: {results.std():5.3} MSE")
 # save the model
 estimator.fit(features, target)
 estimator.model.save("simple_shallow_seq_net.h5")
+
+## try again with standardisation
+estimators = []
+estimators.append(("standardize", StandardScaler()))
+estimators.append(("estimator", KerasRegressor(build_fn=simple_shallow_seq_net, epochs=100, batch_size=50, verbose=0)))
+pipeline = Pipeline(estimators)
+results = cross_val_score(pipeline, features, target, cv=kfold)
+print(f"simple_std_shallow_seq_net model: {results.std():5.3} MSE")
+
+# save the pipelined model
+pipeline.fit(features, target)
+pipeline.named_steps["estimator"].model.save("standardised_simple_shallow_seq_net.h5")

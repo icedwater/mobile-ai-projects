@@ -41,3 +41,7 @@ kfold = KFold(n_splits=10, random_state=seed, shuffle=True)
 estimator = KerasRegressor(build_fn=simple_shallow_seq_net, epochs=100, batch_size=50, verbose=0)
 results = cross_val_score(estimator, features, target, cv=kfold)
 print(f"simple_shallow_seq_net model: {results.std():5.3} MSE")
+
+# save the model
+estimator.fit(features, target)
+estimator.model.save("simple_shallow_seq_net.h5")

@@ -4,5 +4,8 @@
 # excel files should be available online
 *.xls?
 
+# saved models
+*.h5
+
 # virtual environments
 venv/

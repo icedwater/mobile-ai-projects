@@ -9,3 +9,9 @@
 
 # virtual environments
 venv/
+
+# python caches
+__pycache__/
+
+# python binaries
+*.py?

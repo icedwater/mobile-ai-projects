@@ -20,6 +20,9 @@ dataset = dataframe.values
 # book uses a 70/30 split
 features = dataset[:, 0:7]
 target = dataset[:, 7]
+seed = 5    ## fixed for reproducibility, do change it
+numpy.random.seed(seed)
+kfold = KFold(n_splits=10, random_state=seed, shuffle=True)
 
 ## ANN bit starts here ##
 
@@ -34,13 +37,19 @@ def simple_shallow_seq_net():
     model.compile(loss="mean_squared_error", optimizer=sgd)
     return model
 
-## validation settings
-seed = 5    ## fixed for reproducibility, do change it
-numpy.random.seed(seed)
-kfold = KFold(n_splits=10, random_state=seed, shuffle=True)
+
+# utility function for evaluation
+
+def report_MSE(model, model_name="default", features=features, target=target, cv=kfold):
+    """
+    Given a particular named model, create and test an estimator and report its MSE.
+    We assume features, target, and cross-validation are defined already.
+    """
+    results = cross_val_score(model, features, target, cv=kfold)
+    print(f"{model_name:30} MSE\t: {results.std():9.3}")
+
 estimator = KerasRegressor(build_fn=simple_shallow_seq_net, epochs=100, batch_size=50, verbose=0)
-results = cross_val_score(estimator, features, target, cv=kfold)
-print(f"simple_shallow_seq_net model: {results.std():5.3} MSE")
+report_MSE(estimator, model_name="simple_shallow_seq_net")
 
 # save the model
 estimator.fit(features, target)
@@ -51,8 +60,7 @@ estimators = []
 estimators.append(("standardize", StandardScaler()))
 estimators.append(("estimator", KerasRegressor(build_fn=simple_shallow_seq_net, epochs=100, batch_size=50, verbose=0)))
 pipeline = Pipeline(estimators)
-results = cross_val_score(pipeline, features, target, cv=kfold)
-print(f"simple_std_shallow_seq_net model: {results.std():5.3} MSE")
+report_MSE(pipeline, model_name="std_simple_shallow_seq_net")
 
 # save the pipelined model
 pipeline.fit(features, target)

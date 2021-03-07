@@ -37,6 +37,34 @@ def simple_shallow_seq_net():
     model.compile(loss="mean_squared_error", optimizer=sgd)
     return model
 
+def deeper_seq_net():
+    """
+    Create a sequential ANN with a few more layers.
+    """
+    model = Sequential()
+    model.add(Dense(7, input_dim=7, kernel_initializer="normal", activation="sigmoid"))
+    model.add(Dense(7, input_dim=7, kernel_initializer="normal", activation="tanh"))
+    model.add(Dense(7, input_dim=7, kernel_initializer="normal", activation="sigmoid"))
+    model.add(Dense(7, input_dim=7, kernel_initializer="normal", activation="tanh"))
+    model.add(Dense(1, kernel_initializer="normal"))
+    sgd = optimizers.SGD(lr=0.01)
+    model.compile(loss="mean_squared_error", optimizer=sgd)
+    return model
+
+def deepwide_seq_net():
+    """
+    Create a sequential ANN with a few more layers and different widths.
+    Also, vary the activation functions of each layer.
+    """
+    model = Sequential()
+    model.add(Dense(21, input_dim=7, kernel_initializer="normal", activation="relu"))
+    model.add(Dense(21, input_dim=7, kernel_initializer="normal", activation="sigmoid"))
+    model.add(Dense(7, input_dim=7, kernel_initializer="normal", activation="relu"))
+    model.add(Dense(7, input_dim=7, kernel_initializer="normal", activation="tanh"))
+    model.add(Dense(1, kernel_initializer="normal"))
+    sgd = optimizers.SGD(lr=0.01)
+    model.compile(loss="mean_squared_error", optimizer=sgd)
+    return model
 
 # utility function for evaluation
 
@@ -66,3 +94,41 @@ report_MSE(pipeline, model_name="std_simple_shallow_seq_net")
 # save the pipelined model
 pipeline.fit(features, target)
 pipeline.named_steps["estimator"].model.save("standardised_simple_shallow_seq_net.h5")
+
+## evaluate deeper model
+estimator = KerasRegressor(build_fn=deeper_seq_net, epochs=100, batch_size=50, verbose=0)
+report_MSE(estimator, model_name="deeper_seq_net")
+
+# save the model
+estimator.fit(features, target)
+estimator.model.save("deeper_seq_net.h5")
+
+## evaluate deeper model with standardisation
+estimators = []
+estimators.append(("standardize", StandardScaler()))
+estimators.append(("estimator", KerasRegressor(build_fn=deeper_seq_net, epochs=100, batch_size=50, verbose=0)))
+pipeline = Pipeline(estimators)
+report_MSE(pipeline, model_name="std_deeper_seq_net")
+
+# save the pipelined model
+pipeline.fit(features, target)
+pipeline.named_steps["estimator"].model.save("standardised_deeper_seq_net.h5")
+
+## evaluate deepwide model
+estimator = KerasRegressor(build_fn=deepwide_seq_net, epochs=100, batch_size=50, verbose=0)
+report_MSE(estimator, model_name="deepwide_seq_net")
+
+# save the model
+estimator.fit(features, target)
+estimator.model.save("deeper_seq_net.h5")
+
+## evaluate deepwide model with standardisation
+estimators = []
+estimators.append(("standardize", StandardScaler()))
+estimators.append(("estimator", KerasRegressor(build_fn=deepwide_seq_net, epochs=100, batch_size=50, verbose=0)))
+pipeline = Pipeline(estimators)
+report_MSE(pipeline, model_name="std_deepwide_seq_net")
+
+# save the pipelined model
+pipeline.fit(features, target)
+pipeline.named_steps["estimator"].model.save("standardised_deeper_seq_net.h5")
